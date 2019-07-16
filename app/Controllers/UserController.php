@@ -532,7 +532,13 @@ class UserController extends BaseController
                 }
             }
 
-            $array_node['traffic_used'] = (int)Tools::flowToGB($node->node_bandwidth);
+
+            if ($node->sort == 11) {
+                $array_node['traffic_used'] = (int)Tools::flowToGB($node->node_bandwidth * $node->traffic_rate);
+            } else {
+                $array_node['traffic_used'] = (int)Tools::flowToGB($node->node_bandwidth);
+            }
+            
             $array_node['traffic_limit'] = (int)Tools::flowToGB($node->node_bandwidth_limit);
             if ($node->node_speedlimit == 0.0) {
                 $array_node['bandwidth'] = 0;
