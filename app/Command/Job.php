@@ -39,7 +39,7 @@ class Job
         foreach ($nodes as $node) {
             if (in_array($node->sort, array(0, 1, 10, 11, 12, 13))) {
                 $server_list = explode(';', $node->server);
-                if (!Tools::is_ip($server_list[0]) && $node->changeNodeIp($server_list[0])) {
+                if (stripos($node->name,'iplc') === FALSE && !Tools::is_ip($server_list[0]) && $node->changeNodeIp($server_list[0])) {
                     $node->save();
                 }
                 if (in_array($node->sort, array(0, 10, 12))) {
@@ -121,6 +121,9 @@ class Job
         foreach ($nodes as $node) {
             $rule = preg_match("/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/", $node->server);
             if (!$rule && (!$node->sort || $node->sort == 10 || $node->sort == 12 || $node->sort == 13)) {
+                if (!(stripos($node->name,'iplc') === False)) {
+                    continue;
+                }
                 $ip = gethostbyname($node->server);
                 $node->node_ip = $ip;
                 $node->save();
@@ -271,7 +274,7 @@ class Job
     //   定时任务开启的情况下，每天自动检测有没有最新版的后端，github源来自Miku
     public static function updatedownload()
     {
-        system('cd ' . BASE_PATH . '/public/ssr-download/ && git pull https://github.com/xcxnig/ssr-download.git');
+        system('cd ' . BASE_PATH . '/public/ssr-download/ && git pull https://github.com/xcxnig/ssr-download.git && git gc');
     }
 
 
